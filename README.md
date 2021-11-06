@@ -1,6 +1,6 @@
 # tspak
 
-tspak is a small python program designed to extract the contents of TimeSplitters pak files.
+tspak is a small utility program designed to extract the contents of TimeSplitters pak files.
 
 tspak supports the following formats:
 
