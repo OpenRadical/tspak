@@ -69,6 +69,7 @@ int extract(FILE* p_pakFile, char* basePath) {
 
     uint32_t entryOffset;
     uint32_t entryLength;
+    uint32_t entryGzLength;
     char     entryName[0x100];
 
     char*    p_entryBuf;
@@ -106,6 +107,7 @@ int extract(FILE* p_pakFile, char* basePath) {
         case 5:
             entryOffset = ((Entry5*)indexBuf)->offset;
             entryLength = ((Entry5*)indexBuf)->length;
+            entryGzLength = ((Entry5*)indexBuf)->gzLength;
             // Name from crc lookup
             fgets(crcLine, 1024, p_crcFile);
             *strrchr(crcLine, '\n') = 0; // Terminate crcName
@@ -115,6 +117,12 @@ int extract(FILE* p_pakFile, char* basePath) {
                 return 1;
             }
             strcpy(entryName, crcName);
+            // Check if compressed
+            if (entryGzLength > 0) {
+                // Dump .gz file, for now
+                entryLength = entryGzLength;
+                strcat(entryName, ".gz");
+            }
             break;
         case 8:
             entryOffset = ((Entry8*)indexBuf)->offset;
