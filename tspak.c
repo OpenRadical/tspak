@@ -41,6 +41,9 @@ int extract(FILE* p_pakFile, char* basePath) {
     uint8_t  indexSize;
     uint32_t entryCount;
     uint32_t namesOffset;
+    // CRC for v5
+    uint32_t* p_crcSums;
+    char* p_crcStrs;
 
     switch (version) {
     // Index size
@@ -67,6 +70,39 @@ int extract(FILE* p_pakFile, char* basePath) {
     printf("PAK version: %d\n", version);
     printf("No. of files: %d\n", entryCount);
 
+    if (version == 5) {
+        // Open additional CRC32 database
+        FILE* p_crcFile;
+        char crcFilename[FILENAME_MAX];
+        char* crcLine = xmalloc(1024);
+        char* crcSum = &crcLine[0];
+        char* crcName = &crcLine[12];
+
+        sprintf(crcFilename, "%s.c2n", basePath);
+        if (!(p_crcFile = fopen(crcFilename, "rb"))) {
+            printf("Could not open CRC file: %s", crcFilename);
+            return 1;
+        };
+
+        p_crcSums = (uint32_t*)xcalloc(entryCount, sizeof(uint32_t));
+        p_crcStrs = (char*)xcalloc(entryCount, FILENAME_MAX);
+
+        char* crcLeft = crcLine;
+        for (int i = 0; i < entryCount; i++) {
+            crcLeft = fgets(crcLine, 1024, p_crcFile);
+            if (!crcLeft) {
+                printf("Ran out of CRC entries!\n");
+                return 1;
+            }
+            *strrchr(crcLine, '\n') = 0; // Terminate crcName
+            crcLine[10] = 0;             // Terminate crcSum
+            *(p_crcSums + i) = (uint32_t)strtoul(crcSum, NULL, 0);
+            strcpy(p_crcStrs + (FILENAME_MAX*i), crcName);
+        }
+        xfree(crcLine);
+        fclose(p_crcFile);
+    }
+
     uint32_t entryOffset;
     uint32_t entryLength;
     char     entryName[0x100];
@@ -91,8 +127,15 @@ int extract(FILE* p_pakFile, char* basePath) {
         case 5:
             entryOffset = ((Entry5*)indexBuf)->offset;
             entryLength = ((Entry5*)indexBuf)->length;
-            // Name from id in index
-            sprintf(entryName, "%u", ((Entry5*)indexBuf)->id);
+            // Name from crc lookup
+            for (int i = 0; i < entryCount; i++)
+            {
+                if (*(p_crcSums+i) == ((Entry5*)indexBuf)->crc)
+                {
+                    strcpy(entryName, p_crcStrs + (FILENAME_MAX * i));
+                    break;
+                }
+            }
             break;
         case 8:
             entryOffset = ((Entry8*)indexBuf)->offset;
@@ -124,6 +167,10 @@ int extract(FILE* p_pakFile, char* basePath) {
     };
     printf("\nFinished!");
     xfree(p_entryBuf);
+    if (version == 5) {
+        xfree(p_crcSums);
+        xfree(p_crcStrs);
+    }
 
     return 0;
 };

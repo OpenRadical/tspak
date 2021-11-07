@@ -28,10 +28,10 @@ typedef struct {
 
 // P5CK (TS3)
 typedef struct {
-    uint32_t id; // TS3 doesn't use filenames, but rather number IDs
+    uint32_t crc;
     uint32_t offset;
     uint32_t length;
-    uint32_t unknown;
+    uint32_t gzLength;
 } Entry5;
 
 // P8CK (TS2 GC/XBox)
