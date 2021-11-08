@@ -146,7 +146,10 @@ int extract(FILE* p_pakFile, char* basePath) {
         printf("Extracting %s...", p_filePath);
         fseek(p_pakFile, entryOffset, SEEK_SET);
         fread(p_entryBuf, entryLength, 1, p_pakFile);
-        if (!(rw_write_file(p_filePath, p_entryBuf, entryLength, false, true))) { printf("error!\n"); return 1; };
+        if ((rw_write_file(p_filePath, p_entryBuf, entryLength, false, true)) != entryLength) {
+            printf("error!\n");
+            return 1;
+        };
         printf("done\n");
 
         // Next entry
