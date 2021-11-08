@@ -30,6 +30,9 @@
     <ClCompile Include="rw_files.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="c2n.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="str_builder.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tspak.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c2n.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

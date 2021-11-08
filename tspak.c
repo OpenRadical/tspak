@@ -4,6 +4,7 @@
 #include <string.h>
 #include "xmem.h"
 #include "rw_files.h"
+#include "c2n.h"
 #include "tspak.h"
 
 // tspak
@@ -101,6 +102,8 @@ int extract(FILE* p_pakFile, char* basePath) {
             return 1;
         };
         printf("done!\n");
+
+        parseCrcFile("db.c2n");
     }
 
     char* p_filePath;
@@ -120,14 +123,20 @@ int extract(FILE* p_pakFile, char* basePath) {
             entryLength = ((Entry5*)indexBuf)->length;
             entryGzLength = ((Entry5*)indexBuf)->gzLength;
             // Name from crc lookup
-            fgets(crcLine, 1024, p_crcFile);
-            *strrchr(crcLine, '\n') = 0; // Terminate crcName
-            crcLine[10] = 0;             // Terminate crcSum
-            if (((Entry5*)indexBuf)->crc != (uint32_t)strtoul(crcSum, NULL, 0)) {
-                printf("CRC Error!\n");
+            char* p_crcName = lookupCrc(((Entry5*)indexBuf)->crc);
+            if (p_crcFile == NULL) {
+                printf("CRC lookup failed!\n");
                 return 1;
             }
-            strcpy(entryName, crcName);
+            strcpy(entryName, p_crcName);
+            //fgets(crcLine, 1024, p_crcFile);
+            //*strrchr(crcLine, '\n') = 0; // Terminate crcName
+            //crcLine[10] = 0;             // Terminate crcSum
+            //if (((Entry5*)indexBuf)->crc != (uint32_t)strtoul(crcSum, NULL, 0)) {
+            //    printf("CRC Error!\n");
+            //    return 1;
+            //}
+            //strcpy(entryName, crcName);
             // Check if compressed
             if (entryGzLength > 0) {
                 // Dump .gz file, for now
