@@ -9,6 +9,10 @@
 // tspak
 // extract a TimeSplitters PAK file.
 
+char VER4[] = "TS1/2 PS2";
+char VER5[] = "TS:FP";
+char VER8[] = "TS2 GC/XBox";
+
 void usage(char* name) {
     printf("Usage: %s data.pak [data2.pak...]\n", name);
 };
@@ -32,11 +36,14 @@ int extract(FILE* p_pakFile, char* basePath) {
     fread(headerBuf, sizeof(headerBuf), 1, p_pakFile);
     int version = pakVersion(headerBuf);
     if (version < 0) {
-        printf("Not a PAK file!\n");
+        printf("Not a TimeSplitters PAK file!\n");
+        printf("If this is a HomeFront 2 pak file such as lsao_cached.pak\n");
+        printf("please use something like hf2decrypt to extract the real TS2 data!\n");
         return 1;
     }
 
     // Working index data
+    char* pakType;
     uint32_t indexOffset;
     uint8_t  indexSize;
     uint32_t entryCount;
@@ -45,16 +52,19 @@ int extract(FILE* p_pakFile, char* basePath) {
     switch (version) {
     // Index size
     case 4:
+        pakType     = VER4;
         indexSize   = sizeof(Entry4);
         indexOffset = ((Header*)headerBuf)->indexOffset;
         entryCount  = ((Header*)headerBuf)->indexLength / indexSize;
         break;
     case 5:
+        pakType     = VER5;
         indexSize   = sizeof(Entry5);
         indexOffset = ((Header*)headerBuf)->indexOffset;
         entryCount  = ((Header*)headerBuf)->indexLength / indexSize;
         break;
     case 8:
+        pakType     = VER8;
         indexSize   = sizeof(Entry8);
         indexOffset = ((Header2*)headerBuf)->indexOffset;
         entryCount  = ((Header2*)headerBuf)->entryCount;
@@ -64,8 +74,8 @@ int extract(FILE* p_pakFile, char* basePath) {
         printf("Unknown PAK version: %d\n", version);
         return 1;
     };
-    printf("PAK version: %d\n", version);
-    printf("No. of files: %d\n", entryCount);
+    printf("PAK version: %u (%s)\n", version, pakType);
+    printf("No. of files: %u\n", entryCount);
 
     uint32_t entryOffset;
     uint32_t entryLength;
