@@ -36,7 +36,7 @@ typedef struct {
 
 // P8CK (TS2 GC/XBox)
 typedef struct {
-    uint32_t unknown;
+    uint32_t nameOffset;
     uint32_t length;
     uint32_t offset;
 } Entry8;

@@ -70,6 +70,7 @@ int extract(FILE* p_pakFile, char* basePath) {
     uint32_t entryOffset;
     uint32_t entryLength;
     uint32_t entryGzLength;
+    uint32_t nameOffset;
     char     entryName[0x100];
 
     char*    p_entryBuf;
@@ -127,10 +128,10 @@ int extract(FILE* p_pakFile, char* basePath) {
         case 8:
             entryOffset = ((Entry8*)indexBuf)->offset;
             entryLength = ((Entry8*)indexBuf)->length;
+            nameOffset = ((Entry8*)indexBuf)->nameOffset;
             // Name from separate index
-            fseek(p_pakFile, namesOffset, SEEK_SET);
+            fseek(p_pakFile, (namesOffset + nameOffset), SEEK_SET);
             fgets(entryName, sizeof(entryName), p_pakFile);
-            namesOffset += strlen(entryName) + 1;
             break;
         };
         p_filePath = rw_join_path(2, basePath, entryName); // basePath + filePath
