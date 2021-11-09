@@ -4,7 +4,7 @@
 #include <string.h>
 #include "xmem.h"
 #include "rw_files.h"
-#include "c2n.h"
+#include "c2n/c2n.h"
 #include "tspak.h"
 
 // tspak

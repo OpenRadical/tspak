@@ -30,7 +30,7 @@
     <ClCompile Include="rw_files.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c2n.c">
+    <ClCompile Include="c2n/c2n.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClInclude Include="tspak.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c2n.h">
+    <ClInclude Include="c2n/c2n.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -103,7 +103,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="c2n.c" />
+    <ClCompile Include="c2n/c2n.c" />
     <ClCompile Include="rw_files.c" />
     <ClCompile Include="str_builder.c" />
     <ClCompile Include="str_helpers.c" />
@@ -111,7 +111,7 @@
     <ClCompile Include="xmem.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="c2n.h" />
+    <ClInclude Include="c2n/c2n.h" />
     <ClInclude Include="rw_files.h" />
     <ClInclude Include="str_builder.h" />
     <ClInclude Include="str_helpers.h" />
